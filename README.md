@@ -1,5 +1,6 @@
 ## Assessing GPT-based Data Augmentation for Intrusion Detection in IIoT
 
+```
 project/
 ├── notebooks/
 │   ├── 1_data_augmentation.ipynb
@@ -11,3 +12,4 @@ project/
 ├── README.md
 ├── requirements.txt
 └── setup.py
+```
