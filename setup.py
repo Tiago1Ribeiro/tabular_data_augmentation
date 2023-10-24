@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='data augmentation',
+    name='tabular_data_augmentation',
     version='1.0.0',
-    description='Data augmentation for imbalanced datasets',
+    description='data augmentation for imbalanced datasets',
     author='Tiago F. R. Ribeiro',
     packages=find_packages(),
     install_requires=[
