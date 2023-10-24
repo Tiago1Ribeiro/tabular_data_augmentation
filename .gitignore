@@ -7,4 +7,6 @@ __pycache__/
 
 # Folders
 jupyter_collaboration/
-data/
+# ignore csv files inside the data folder
+/data/*.csv
+/checkpoints
