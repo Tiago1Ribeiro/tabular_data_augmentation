@@ -1,0 +1,10 @@
+# Config file
+config.ini
+
+# System files
+__pycache__/
+*.pyc
+
+# Folders
+jupyter_collaboration/
+data/
