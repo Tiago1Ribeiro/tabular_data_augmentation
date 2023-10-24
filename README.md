@@ -3,7 +3,9 @@
 ```
 project/
 ├── notebooks/
-│   ├── 1_data_augmentation.ipynb
+│   ├── 1_preprocessing.ipynb
+│   ├── 2_data_augmentation.ipynb
+│   ├── 3_evaluation.ipynb
 │   └── ...
 ├── src/
 │   ├── utils.py
