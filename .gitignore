@@ -4,9 +4,13 @@ config.ini
 # System files
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Folders
-jupyter_collaboration/
-# ignore csv files inside the data folder
-/data/*.csv
-/checkpoints
+# ignore file inside folder, but not the folder itself
+data/*
+checkpoints/*
+results/*
+
+# Jupyter Notebook
+.ipynb_checkpoints
