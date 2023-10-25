@@ -13,3 +13,6 @@ checkpoints/*
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Keras models
+*.h5
