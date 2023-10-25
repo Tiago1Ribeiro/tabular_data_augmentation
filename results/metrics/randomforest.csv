@@ -1,0 +1,2 @@
+model,augmentations,timestamp,accuracy,precision,recall,f1
+Random Forest,None,2023-10-25 18:12:25,0.901996156403986,0.9305967312710909,0.901996156403986,0.9122719694303306
