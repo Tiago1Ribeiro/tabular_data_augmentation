@@ -1,3 +1,0 @@
-model, augmentations, timestamp, accuracy, precision, recall, f1
-TabNet,None,2023-10-25 15:03:43,0.44068870537841615,0.9229588532269,0.44068870537841615,0.5244677179948658
-
