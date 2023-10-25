@@ -1,4 +1,9 @@
-## Assessing GPT-based Data Augmentation for Intrusion Detection in IIoT
+# Assessing GPT-based Data Augmentation for Intrusion Detection in IIoT
+
+### Description
+
+
+### Repository structure
 
 ```
 project/                  
@@ -7,17 +12,33 @@ project/
 │   ├── 2_data_augmentation.ipynb # Data augmentation algorithms
 │   ├── 3_evaluation.ipynb        # Models evaluation
 │   └── ...                       
-├── src/                   # Directory for source code
-│   ├── utils.py           # Utility functions for the project
+├── src/                   # Source code
+│   ├── utils.py           # Utility functions
 │   └── ...                
-├── results/               # Directory for output files
-│   ├── results.csv        # CSV file for model evaluation results
+├── results/               # Output files
+│   ├── results.csv        # Evaluation results
 │   └── ...                
-├── data/                  # Directory for input data
-├── checkpoints/           # Directory for model checkpoints
+├── data/                  # Input data
+├── checkpoints/           # Model checkpoints
 │
-├── .gitignore             # Git ignore file
+├── .gitignore             # To be ignored by git
 ├── README.md              # Project README file
-├── requirements.txt       # Project dependencies file
-└── setup.py               # Setup file for the project
+├── requirements.txt       # Dependencies file
+└── setup.py               # Setup file 
 ```
+
+### Acknowledgements
+
+
+---
+
+<p align="center">
+<img src="assets/CIIC_logo.png" width="1000px"/>
+</p>
+
+---
+<!-- <div align="center">
+
+ [Preprint](https://doi.org/10.48550/arXiv.2307.06243) | [Reviewed Article](http://dx.doi.org/10.1007/978-3-031-42914-9_5) | [Dataset](https://zenodo.org/record/7944963#.ZGYoxHbMIQ8) | [Dataset Citation](#burnedareauav-dataset-citation) 
+ 
+</div> -->
