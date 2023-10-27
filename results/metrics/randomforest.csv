@@ -1,2 +1,2 @@
-model,augmentations,timestamp,accuracy,precision,recall,f1
-Random Forest,None,2023-10-25 18:12:25,0.901996156403986,0.9305967312710909,0.901996156403986,0.9122719694303306
+model, augmentations, timestamp, accuracy, precision_macro, recall_macro, f1_macro, precision_weighted, recall_weighted, f1_weighted
+Random Forest,None,2023-10-27 13:55:49,0.901996156403986,0.7760233586743925,0.8614753937978447,0.8103379293883155,0.9305967312710909,0.901996156403986,0.9122719694303306

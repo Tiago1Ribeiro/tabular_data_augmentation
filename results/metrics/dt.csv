@@ -1,4 +1,2 @@
-model,augmentations,timestamp,accuracy,precision,recall,f1
-Decision Tree,None,2023-10-25 16:54:43,0.2561411133860824,0.8813932336751773,0.2561411133860824,0.18518814477325857
-
-
+model, augmentations, timestamp, accuracy, precision_macro, recall_macro, f1_macro, precision_weighted, recall_weighted, f1_weighted
+Decision Tree,None,2023-10-27 13:43:08,0.8892007519623809,0.7435274859983392,0.8585289927645178,0.7876018110976448,0.9271013556157864,0.8892007519623809,0.9023598710996502
