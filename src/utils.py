@@ -4,9 +4,12 @@
 # Description: This file contains utility functions used in the project.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import pandas as pd
-from sklearn.preprocessing import LabelEncoder
 import os
+import logging
+import pandas as pd
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, LabelEncoder
+import numpy as np
+
 
 def save_results_to_csv(results, csv_file_path):
     """
@@ -154,6 +157,83 @@ def encode_labels(y_train, y_test):
         print(f'{label:23s} {i:d}')
 
     return y_train_enc, y_test_enc, le
+
+
+
+
+def scale_data(X_train, X_test, scaler_type='standard'):
+    """
+    Scale the input data using the specified scaler.
+
+    Parameters:
+    X_train (np.array): The training data to be scaled.
+    X_test (np.array): The test data to be scaled.
+    scaler_type (str): The type of scaler to use. Options are 'standard', 'minmax', and 'robust'. Default is 'standard'.
+
+    Returns:
+    X_train_scaled (np.array): The scaled training data.
+    X_test_scaled (np.array): The scaled test data.
+
+    Raises:
+    ValueError: If the scaler_type is not 'standard', 'minmax', or 'robust'.
+    Exception: If there was an error during scaling.
+    """
+    
+    if not isinstance(X_train, np.ndarray) or not isinstance(X_test, np.ndarray):
+        raise ValueError("Input data should be numpy array")
+    if scaler_type not in ['standard', 'minmax', 'robust']:
+        raise ValueError(f'Unknown scaler: {scaler_type}')
+
+    if scaler_type == 'standard':
+        scaler = StandardScaler()
+    elif scaler_type == 'minmax':
+        scaler = MinMaxScaler()
+    elif scaler_type == 'robust':
+        scaler = RobustScaler()
+
+    try:
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
+        logging.info(f'Scaling successful with {scaler_type} scaler.')
+    except Exception as e:
+        logging.error(f'Error during scaling: {str(e)}')
+        raise
+    
+    pretty_print_stats(X_train_scaled, X_test_scaled)
+    
+    return X_train_scaled, X_test_scaled
+
+
+def pretty_print_stats(X_train, X_test):
+    """
+    Pretty print the mean and standard deviation of the input data.
+
+    Parameters:
+    X_train (np.array): The training data.
+    X_test (np.array): The test data.
+    """
+
+    # Calculate mean and standard deviation
+    train_mean, train_std = X_train.mean(), X_train.std()
+    test_mean, test_std = X_test.mean(), X_test.std()
+
+    # Create a dictionary of the stats
+    stats = {
+        'Train Data': {
+            'Mean': round(train_mean, 2),
+            'Standard Deviation': round(train_std, 2)
+        },
+        'Test Data': {
+            'Mean': round(test_mean, 2),
+            'Standard Deviation': round(test_std, 2)
+        }
+    }
+
+    # Pretty print the stats
+    from pprint import pprint
+    pprint(stats, underscore_numbers=True)
+
+
 
 
 # def save_results_to_csv(results, file_path, columns=None, append=True):
