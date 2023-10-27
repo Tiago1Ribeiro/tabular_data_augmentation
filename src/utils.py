@@ -5,6 +5,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 import os
 
 def save_results_to_csv(results, csv_file_path):
@@ -50,7 +51,7 @@ def load_dataset(data_directory, augmentation='None', ignore_columns=None):
     # Define file paths based on augmentation option
     file_paths = {
         'None': {'train': 'EdgeIIot_train_100k.csv', 'test': 'EdgeIIot_test.csv'},
-        'SMOTE': {'train': 'EdgeIIot_train_100k_SMOTE.csv', 'test': 'EdgeIIot_encoded_test.csv'},
+        'SMOTE': {'train': 'train_smote.csv', 'test': 'encoded_testData.csv'},
         'SMOTE-NC': {'train': 'EdgeIIot_train_100k_SMOTE_NC.csv', 'test': 'EdgeIIot_test.csv'},
         'RealTabFormer': {'train': 'EdgeIIot_train_100k_RealTabFormer.csv', 'test': 'EdgeIIot_test.csv'},
         'GReaT': {'train': 'EdgeIIot_train_100k_GReaT.csv', 'test': 'EdgeIIot_test.csv'},
@@ -78,9 +79,81 @@ def load_dataset(data_directory, augmentation='None', ignore_columns=None):
         different_columns = set(df_train.columns) ^ set(df_test.columns)
         print(f"Warning: Test data has different columns than training data.\nColumns: {different_columns}")
 
-    print(f"Loading complete.\nTraining data: {df_train.shape[0]} lines, {df_train.shape[1]} columns. Test data: {df_test.shape[0]} lines, {df_test.shape[1]} columns.")
+    print(f"Loading complete.\nTraining data: {df_train.shape[0]} rows, {df_train.shape[1]} columns. \nTest data: {df_test.shape[0]} rows, {df_test.shape[1]} columns.")
 
     return df_train, df_test
+
+
+
+def one_hot_encode_categorical(X_train, X_test, random_state=None):
+    """
+    One-hot encode categorical features in X_train and X_test.
+
+    Parameters:
+    - X_train: pd.DataFrame, training dataset.
+    - X_test: pd.DataFrame, test dataset.
+    - random_state: int or None, random state for train_test_split.
+
+    Returns:
+    - X_train_enc: pd.DataFrame, one-hot encoded training dataset.
+    - X_test_enc: pd.DataFrame, one-hot encoded test dataset.
+    """
+
+    # Extract categorical features
+    cat_features_train = X_train.select_dtypes(include="object").columns
+    cat_features_test = X_test.select_dtypes(include="object").columns
+
+    # Check if there are categorical features
+    if cat_features_train.empty and cat_features_test.empty:
+        print("No categorical features found. Returning original datasets.")
+        return X_train, X_test
+
+    # Concatenate X_train and X_test
+    X_comb = pd.concat([X_train[cat_features_train], X_test[cat_features_test]], axis=0)
+
+    # Apply one-hot encoding (get_dummies)
+    X_comb_enc = pd.get_dummies(X_comb, dtype='int8')
+
+    # Split back into X_train and X_test
+    rows_train = len(X_train)
+    X_train_enc = X_comb_enc.iloc[:rows_train, :]
+    X_test_enc = X_comb_enc.iloc[rows_train:, :]
+    
+    print("Encoding complete.")
+    print(f"No of features before encoding: {X_train.shape[1]}" + "\n" + f"No of features after encoding: {X_train_enc.shape[1]}")
+
+    return X_train_enc, X_test_enc
+
+def encode_labels(y_train, y_test):
+    """
+    Encode labels using LabelEncoder, print the correspondence between original and encoded labels,
+    and return the label encoder for potential inverse transformations.
+
+    Parameters:
+    - y_train: pd.Series or array-like, training labels.
+    - y_test: pd.Series or array-like, test labels.
+
+    Returns:
+    - y_train_enc: pd.Series, encoded training labels.
+    - y_test_enc: pd.Series, encoded test labels.
+    - le: LabelEncoder, label encoder instance.
+    """
+
+    # Instantiate the label encoder
+    le = LabelEncoder()
+
+    # Fit and encode the training labels
+    y_train_enc = le.fit_transform(y_train)
+
+    # Encode the test labels
+    y_test_enc = le.transform(y_test)
+
+    # Print the correspondence between original and encoded labels
+    print('Attack_type and encoded labels:\n')
+    for i, label in enumerate(le.classes_):
+        print(f'{label:23s} {i:d}')
+
+    return y_train_enc, y_test_enc, le
 
 
 # def save_results_to_csv(results, file_path, columns=None, append=True):
