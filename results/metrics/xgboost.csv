@@ -1,0 +1,2 @@
+model,augmentations,timestamp,accuracy,precision_macro,recall_macro,f1_macro,precision_weighted,recall_weighted,f1_weighted
+XGBoost,None,2023-10-27 15:20:14,0.9844868485130939,0.9272479682700431,0.9103027033077521,0.9164830629065992,0.9859435094211698,0.9844868485130939,0.9845125675549613

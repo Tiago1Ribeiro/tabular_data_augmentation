@@ -1,1 +1,2 @@
 model, augmentations, timestamp, accuracy, precision_macro, recall_macro, f1_macro, precision_weighted, recall_weighted, f1_weighted
+Neural Net,None,2023-10-27 15:06:29,0.9494153440123163,0.8566639701809168,0.7711114890632532,0.7794546918290729,0.9623384218527102,0.9494153440123163,0.9448168693463704
