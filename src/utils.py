@@ -5,7 +5,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import pandas as pd
-
+import os
 
 def save_results_to_csv(results, csv_file_path):
     """
@@ -31,6 +31,56 @@ def save_results_to_csv(results, csv_file_path):
 
     # Append results to the CSV file
     df.to_csv(csv_file_path, mode='a', header=not file_exists, index=False)
+
+
+def load_dataset(data_directory, augmentation='None', ignore_columns=None):
+    """
+    Load and validate training and test data based on the augmentation option.
+
+    Parameters:
+    - data_directory: str, path to the directory containing data files.
+    - augmentation: str, augmentation option ('None', 'SMOTE', 'SMOTE-NC', 'RealTabFormer', 'GReaT').
+    - ignore_columns: list, optional, list of column names to ignore during validation.
+
+    Returns:
+    - df_train: pd.DataFrame, training dataset.
+    - df_test: pd.DataFrame, test dataset.
+    """
+
+    # Define file paths based on augmentation option
+    file_paths = {
+        'None': {'train': 'EdgeIIot_train_100k.csv', 'test': 'EdgeIIot_test.csv'},
+        'SMOTE': {'train': 'EdgeIIot_train_100k_SMOTE.csv', 'test': 'EdgeIIot_encoded_test.csv'},
+        'SMOTE-NC': {'train': 'EdgeIIot_train_100k_SMOTE_NC.csv', 'test': 'EdgeIIot_test.csv'},
+        'RealTabFormer': {'train': 'EdgeIIot_train_100k_RealTabFormer.csv', 'test': 'EdgeIIot_test.csv'},
+        'GReaT': {'train': 'EdgeIIot_train_100k_GReaT.csv', 'test': 'EdgeIIot_test.csv'},
+    }
+
+    # Validate augmentation option
+    if augmentation not in file_paths:
+        raise ValueError("AUGMENTATION option not recognized.\n \t     Please choose between 'None', 'SMOTE', 'SMOTE-NC', 'RealTabFormer', or 'GReaT'.")
+
+    # Load training data
+    df_train_path = os.path.join(data_directory, file_paths[augmentation]['train'])
+    df_train = pd.read_csv(df_train_path, low_memory=False)
+
+    # Load test data
+    df_test_path = os.path.join(data_directory, file_paths[augmentation]['test'])
+    df_test = pd.read_csv(df_test_path, low_memory=False)
+
+    # Ignore specified columns during validation
+    if ignore_columns:
+        df_train = df_train.drop(columns=ignore_columns, errors='ignore')
+        df_test = df_test.drop(columns=ignore_columns, errors='ignore')
+
+    # Validate if test data has the same columns as training data
+    if set(df_train.columns) != set(df_test.columns):
+        different_columns = set(df_train.columns) ^ set(df_test.columns)
+        print(f"Warning: Test data has different columns than training data.\nColumns: {different_columns}")
+
+    print(f"Loading complete.\nTraining data: {df_train.shape[0]} lines, {df_train.shape[1]} columns. Test data: {df_test.shape[0]} lines, {df_test.shape[1]} columns.")
+
+    return df_train, df_test
 
 
 # def save_results_to_csv(results, file_path, columns=None, append=True):
@@ -124,3 +174,4 @@ def save_results_to_csv(results, csv_file_path):
 #             print(f"Existing file overwritten with new results: {file_path}")
 #         elif not file_exists:
 #             print(f"New CSV file created: {file_path}")
+
