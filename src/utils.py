@@ -55,7 +55,7 @@ def load_dataset(data_directory, augmentation='None', ignore_columns=None):
     file_paths = {
         'None': {'train': 'EdgeIIot_train_100k.csv', 'test': 'EdgeIIot_test.csv'},
         'SMOTE': {'train': 'train_smote.csv', 'test': 'encoded_testData.csv'},
-        'SMOTE-NC': {'train': 'EdgeIIot_train_100k_SMOTE_NC.csv', 'test': 'EdgeIIot_test.csv'},
+        'SMOTE-NC': {'train': 'train_smotenc.csv', 'test': 'EdgeIIot_test.csv'},
         'RealTabFormer': {'train': 'EdgeIIot_train_100k_RealTabFormer.csv', 'test': 'EdgeIIot_test.csv'},
         'GReaT': {'train': 'EdgeIIot_train_100k_GReaT.csv', 'test': 'EdgeIIot_test.csv'},
     }
