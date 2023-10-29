@@ -7,7 +7,12 @@
 import os
 import logging
 import pandas as pd
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, LabelEncoder
+from sklearn.preprocessing import (
+    StandardScaler,
+    MinMaxScaler,
+    RobustScaler,
+    LabelEncoder,
+)
 import numpy as np
 
 
@@ -34,10 +39,10 @@ def save_results_to_csv(results, csv_file_path):
         pass
 
     # Append results to the CSV file
-    df.to_csv(csv_file_path, mode='a', header=not file_exists, index=False)
+    df.to_csv(csv_file_path, mode="a", header=not file_exists, index=False)
 
 
-def load_dataset(data_directory, augmentation='None', ignore_columns=None):
+def load_dataset(data_directory, augmentation="None", ignore_columns=None):
     """
     Load and validate training and test data based on the augmentation option.
 
@@ -53,39 +58,50 @@ def load_dataset(data_directory, augmentation='None', ignore_columns=None):
 
     # Define file paths based on augmentation option
     file_paths = {
-        'None': {'train': 'EdgeIIot_train_100k.csv', 'test': 'EdgeIIot_test.csv'},
-        'SMOTE': {'train': 'train_smote.csv', 'test': 'encoded_testData.csv'},
-        'SMOTE-NC': {'train': 'train_smotenc.csv', 'test': 'EdgeIIot_test.csv'},
-        'RealTabFormer': {'train': 'EdgeIIot_train_100k_RealTabFormer.csv', 'test': 'EdgeIIot_test.csv'},
-        'GReaT': {'train': 'EdgeIIot_train_100k_GReaT.csv', 'test': 'EdgeIIot_test.csv'},
+        "None": {"train": "EdgeIIot_train_100k.csv", "test": "EdgeIIot_test.csv"},
+        "SMOTE": {"train": "train_smote.csv", "test": "encoded_testData.csv"},
+        "SMOTE-NC": {"train": "train_smotenc.csv", "test": "EdgeIIot_test.csv"},
+        "RealTabFormer": {
+            "train": "EdgeIIot_train_100k_RealTabFormer.csv",
+            "test": "EdgeIIot_test.csv",
+        },
+        "GReaT": {
+            "train": "EdgeIIot_train_100k_GReaT.csv",
+            "test": "EdgeIIot_test.csv",
+        },
     }
 
     # Validate augmentation option
     if augmentation not in file_paths:
-        raise ValueError("AUGMENTATION option not recognized.\n \t     Please choose between 'None', 'SMOTE', 'SMOTE-NC', 'RealTabFormer', or 'GReaT'.")
+        raise ValueError(
+            "AUGMENTATION option not recognized.\n \t     Please choose between 'None', 'SMOTE', 'SMOTE-NC', 'RealTabFormer', or 'GReaT'."
+        )
 
     # Load training data
-    df_train_path = os.path.join(data_directory, file_paths[augmentation]['train'])
+    df_train_path = os.path.join(data_directory, file_paths[augmentation]["train"])
     df_train = pd.read_csv(df_train_path, low_memory=False)
 
     # Load test data
-    df_test_path = os.path.join(data_directory, file_paths[augmentation]['test'])
+    df_test_path = os.path.join(data_directory, file_paths[augmentation]["test"])
     df_test = pd.read_csv(df_test_path, low_memory=False)
 
     # Ignore specified columns during validation
     if ignore_columns:
-        df_train = df_train.drop(columns=ignore_columns, errors='ignore')
-        df_test = df_test.drop(columns=ignore_columns, errors='ignore')
+        df_train = df_train.drop(columns=ignore_columns, errors="ignore")
+        df_test = df_test.drop(columns=ignore_columns, errors="ignore")
 
     # Validate if test data has the same columns as training data
     if set(df_train.columns) != set(df_test.columns):
         different_columns = set(df_train.columns) ^ set(df_test.columns)
-        print(f"Warning: Test data has different columns than training data.\nColumns: {different_columns}")
+        print(
+            f"Warning: Test data has different columns than training data.\nColumns: {different_columns}"
+        )
 
-    print(f"Loading complete.\nTraining data: {df_train.shape[0]} rows, {df_train.shape[1]} columns. \nTest data: {df_test.shape[0]} rows, {df_test.shape[1]} columns.")
+    print(
+        f"Loading complete.\nTraining data: {df_train.shape[0]} rows, {df_train.shape[1]} columns. \nTest data: {df_test.shape[0]} rows, {df_test.shape[1]} columns."
+    )
 
     return df_train, df_test
-
 
 
 def one_hot_encode_categorical(X_train, X_test, random_state=None):
@@ -115,17 +131,22 @@ def one_hot_encode_categorical(X_train, X_test, random_state=None):
     X_comb = pd.concat([X_train[cat_features_train], X_test[cat_features_test]], axis=0)
 
     # Apply one-hot encoding (get_dummies)
-    X_comb_enc = pd.get_dummies(X_comb, dtype='int8')
+    X_comb_enc = pd.get_dummies(X_comb, dtype="int8")
 
     # Split back into X_train and X_test
     rows_train = len(X_train)
     X_train_enc = X_comb_enc.iloc[:rows_train, :]
     X_test_enc = X_comb_enc.iloc[rows_train:, :]
-    
+
     print("Encoding complete.")
-    print(f"No of features before encoding: {X_train.shape[1]}" + "\n" + f"No of features after encoding: {X_train_enc.shape[1]}")
+    print(
+        f"No of features before encoding: {X_train.shape[1]}"
+        + "\n"
+        + f"No of features after encoding: {X_train_enc.shape[1]}"
+    )
 
     return X_train_enc, X_test_enc
+
 
 def encode_labels(y_train, y_test):
     """
@@ -152,16 +173,57 @@ def encode_labels(y_train, y_test):
     y_test_enc = le.transform(y_test)
 
     # Print the correspondence between original and encoded labels
-    print('Attack_type and encoded labels:\n')
+    print("Attack_type and encoded labels:\n")
     for i, label in enumerate(le.classes_):
-        print(f'{label:23s} {i:d}')
+        print(f"{label:23s} {i:d}")
 
     return y_train_enc, y_test_enc, le
 
 
+# def scale_data(X_train, X_test, scaler_type="standard"):
+#     """
+#     Scale the input data using the specified scaler.
+
+#     Parameters:
+#     X_train (np.array): The training data to be scaled.
+#     X_test (np.array): The test data to be scaled.
+#     scaler_type (str): The type of scaler to use. Options are 'standard', 'minmax', and 'robust'. Default is 'standard'.
+
+#     Returns:
+#     X_train_scaled (np.array): The scaled training data.
+#     X_test_scaled (np.array): The scaled test data.
+
+#     Raises:
+#     ValueError: If the scaler_type is not 'standard', 'minmax', or 'robust'.
+#     Exception: If there was an error during scaling.
+#     """
+
+#     if not isinstance(X_train, np.ndarray) or not isinstance(X_test, np.ndarray):
+#         raise ValueError("Input data should be numpy array")
+#     if scaler_type not in ["standard", "minmax", "robust"]:
+#         raise ValueError(f"Unknown scaler: {scaler_type}")
+
+#     if scaler_type == "standard":
+#         scaler = StandardScaler()
+#     elif scaler_type == "minmax":
+#         scaler = MinMaxScaler()
+#     elif scaler_type == "robust":
+#         scaler = RobustScaler()
+
+#     try:
+#         X_train_scaled = scaler.fit_transform(X_train)
+#         X_test_scaled = scaler.transform(X_test)
+#         logging.info(f"Scaling successful with {scaler_type} scaler.")
+#     except Exception as e:
+#         logging.error(f"Error during scaling: {str(e)}")
+#         raise
+
+#     pretty_print_stats(X_train_scaled, X_test_scaled)
+
+#     return X_train_scaled, X_test_scaled
 
 
-def scale_data(X_train, X_test, scaler_type='standard'):
+def scale_data(X_train, X_test, scaler_type="standard"):
     """
     Scale the input data using the specified scaler.
 
@@ -178,29 +240,30 @@ def scale_data(X_train, X_test, scaler_type='standard'):
     ValueError: If the scaler_type is not 'standard', 'minmax', or 'robust'.
     Exception: If there was an error during scaling.
     """
-    
-    if not isinstance(X_train, np.ndarray) or not isinstance(X_test, np.ndarray):
-        raise ValueError("Input data should be numpy array")
-    if scaler_type not in ['standard', 'minmax', 'robust']:
-        raise ValueError(f'Unknown scaler: {scaler_type}')
 
-    if scaler_type == 'standard':
+    X_train = np.asarray(X_train)
+    X_test = np.asarray(X_test)
+
+    if scaler_type not in ["standard", "minmax", "robust"]:
+        raise ValueError(f"Unknown scaler: {scaler_type}")
+
+    if scaler_type == "standard":
         scaler = StandardScaler()
-    elif scaler_type == 'minmax':
+    elif scaler_type == "minmax":
         scaler = MinMaxScaler()
-    elif scaler_type == 'robust':
+    elif scaler_type == "robust":
         scaler = RobustScaler()
 
     try:
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
-        logging.info(f'Scaling successful with {scaler_type} scaler.')
+        logging.info(f"Scaling successful with {scaler_type} scaler.")
     except Exception as e:
-        logging.error(f'Error during scaling: {str(e)}')
+        logging.error(f"Error during scaling: {str(e)}")
         raise
-    
+
     pretty_print_stats(X_train_scaled, X_test_scaled)
-    
+
     return X_train_scaled, X_test_scaled
 
 
@@ -217,23 +280,10 @@ def pretty_print_stats(X_train, X_test):
     train_mean, train_std = X_train.mean(), X_train.std()
     test_mean, test_std = X_test.mean(), X_test.std()
 
-    # Create a dictionary of the stats
-    stats = {
-        'Train Data': {
-            'Mean': round(train_mean, 2),
-            'Standard Deviation': round(train_std, 2)
-        },
-        'Test Data': {
-            'Mean': round(test_mean, 2),
-            'Standard Deviation': round(test_std, 2)
-        }
-    }
-
-    # Pretty print the stats
-    from pprint import pprint
-    pprint(stats, underscore_numbers=True)
-
-
+    # print stats in a nice table wirh regular spacing, left aligned with separator
+    print(f"{'':<10}{'mean':<10}{'std':<10}")
+    print(f"{'Train:':<10}{train_mean:<10.3f}{train_std:<10.3f}")
+    print(f"{'Test:':<10}{test_mean:<10.3f}{test_std:<10.3f}")
 
 
 # def save_results_to_csv(results, file_path, columns=None, append=True):
@@ -327,4 +377,3 @@ def pretty_print_stats(X_train, X_test):
 #             print(f"Existing file overwritten with new results: {file_path}")
 #         elif not file_exists:
 #             print(f"New CSV file created: {file_path}")
-
