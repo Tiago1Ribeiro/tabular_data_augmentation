@@ -119,8 +119,9 @@ def encode_categorical(X_train, X_test, encoding="onehot"):
     - encoding: str, optional, type of encoder to use. Options are 'onehot' and 'label'. Default is 'onehot'.
 
     Returns:
-    - X_train_enc: pd.DataFrame, one-hot encoded training dataset.
-    - X_test_enc: pd.DataFrame, one-hot encoded test dataset.
+    - X_train_enc: pd.DataFrame, encoded training dataset.
+    - X_test_enc: pd.DataFrame, encoded test dataset.
+    - additional_info: dict, additional information depending on the encoding type.
     """
 
     # Extract categorical features
@@ -132,7 +133,7 @@ def encode_categorical(X_train, X_test, encoding="onehot"):
     # Check if there are categorical features
     if cat_features_train.empty and cat_features_test.empty:
         print("No categorical features found. Returning original datasets.")
-        return X_train, X_test
+        return X_train, X_test, None
 
     cat_features = list(set(cat_features_train) | set(cat_features_test))
 
@@ -163,7 +164,12 @@ def encode_categorical(X_train, X_test, encoding="onehot"):
             + f"No of features after encoding: {X_train_enc.shape[1]}"
         )
 
-        return X_train_enc, X_test_enc, categorical_columns, categorical_dims
+        additional_info = {
+            "categorical_columns": categorical_columns,
+            "categorical_dims": categorical_dims,
+        }
+
+        return X_train_enc, X_test_enc, additional_info
 
     else:
         # Apply one-hot encoding (get_dummies) only to categorical features
@@ -186,7 +192,9 @@ def encode_categorical(X_train, X_test, encoding="onehot"):
             + f"No of features after encoding: {X_train_enc.shape[1]}"
         )
 
-        return X_train_enc, X_test_enc
+        additional_info = {"encoded_columns": list(X_comb_enc.columns)}
+
+        return X_train_enc, X_test_enc, additional_info
 
 
 def encode_labels(y_train, y_test):
