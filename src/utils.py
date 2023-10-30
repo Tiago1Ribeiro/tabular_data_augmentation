@@ -103,7 +103,7 @@ def load_dataset(data_directory, augmentation="None", ignore_columns=None):
         )
 
     print(
-        f"Loading complete.\nTraining data: {df_train.shape[0]} rows, {df_train.shape[1]} columns. \nTest data: {df_test.shape[0]} rows, {df_test.shape[1]} columns."
+        f"Loading complete.\nTrain data: {df_train.shape[0]} rows, {df_train.shape[1]} columns. \nTest data: {df_test.shape[0]} rows, {df_test.shape[1]} columns."
     )
 
     return df_train, df_test
