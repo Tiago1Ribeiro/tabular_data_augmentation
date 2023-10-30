@@ -65,7 +65,7 @@ def load_dataset(data_directory, augmentation="None", ignore_columns=None):
             "train": "EdgeIIot_train_smote_v2.csv",
             "test": "EdgeIIot_test_enc_v2.csv",
         },
-        "SMOTE-NC": {"train": "train_smotenc.csv", "test": "EdgeIIot_test.csv"},
+        "SMOTE-NC": {"train": "train_smotenc_v2.csv", "test": "EdgeIIot_test.csv"},
         "RealTabFormer": {
             "train": "EdgeIIot_train_100k_RealTabFormer.csv",
             "test": "EdgeIIot_test.csv",
