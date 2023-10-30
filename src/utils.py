@@ -109,13 +109,14 @@ def load_dataset(data_directory, augmentation="None", ignore_columns=None):
     return df_train, df_test
 
 
-def encode_categorical(X_train, X_test):
+def encode_categorical(X_train, X_test, encoding="onehot"):
     """
-    One-hot encode categorical features in X_train and X_test.
+    Encode categorical features in X_train and X_test.
 
     Parameters:
     - X_train: pd.DataFrame, training dataset.
     - X_test: pd.DataFrame, test dataset.
+    - encoding: str, optional, type of encoder to use. Options are 'onehot' and 'label'. Default is 'onehot'.
 
     Returns:
     - X_train_enc: pd.DataFrame, one-hot encoded training dataset.
@@ -138,31 +139,54 @@ def encode_categorical(X_train, X_test):
     print(f"Categorical features to be encoded:\n")
     print("\n".join(cat_features))
 
-    # Apply one-hot encoding (get_dummies) only to categorical features
-    X_comb_enc = pd.get_dummies(
-        X_comb, columns=cat_features_train, drop_first=True, dtype="int8"
-    )
+    if encoding == "label":
+        # LabelEncoder (Encode target labels with value between 0 and n_classes-1)
+        categorical_columns = []
+        categorical_dims = {}
 
-    # Drop original categorical columns
-    X_comb_enc = X_comb_enc.drop(columns=cat_features, errors="ignore")
+        # Encode categorical features
+        for feature in cat_features:
+            le = LabelEncoder()
+            X_comb[feature] = le.fit_transform(X_comb[feature])
+            categorical_columns.append(feature)
+            categorical_dims[feature] = len(le.classes_)
 
-    # Split back into X_train and X_test
-    rows_train = len(X_train)
-    X_train_enc = X_comb_enc.iloc[:rows_train, :]
-    X_test_enc = X_comb_enc.iloc[rows_train:, :]
+        # Split back into X_train and X_test
+        rows_train = len(X_train)
+        X_train_enc = X_comb.iloc[:rows_train, :]
+        X_test_enc = X_comb.iloc[rows_train:, :]
 
-    print("\nEncoding complete.")
-    print(
-        f"No of features before encoding: {X_train.shape[1]}"
-        + "\n"
-        + f"No of features after encoding: {X_train_enc.shape[1]}"
-    )
+        print("\nEncoding complete.")
+        print(
+            f"No of features before encoding: {X_train.shape[1]}"
+            + "\n"
+            + f"No of features after encoding: {X_train_enc.shape[1]}"
+        )
 
-    return X_train_enc, X_test_enc
+        return X_train_enc, X_test_enc, categorical_columns, categorical_dims
 
+    else:
+        # Apply one-hot encoding (get_dummies) only to categorical features
+        X_comb_enc = pd.get_dummies(
+            X_comb, columns=cat_features_train, drop_first=True, dtype="int8"
+        )
 
-# Por favor corrige e completa esta fução de modo a que ela facoa get dumies so
-# às varivaies categoricas e as junte às restantes, eliminado das categoricas e objetco originais
+        # Drop original categorical columns
+        X_comb_enc = X_comb_enc.drop(columns=cat_features, errors="ignore")
+
+        # Split back into X_train and X_test
+        rows_train = len(X_train)
+        X_train_enc = X_comb_enc.iloc[:rows_train, :]
+        X_test_enc = X_comb_enc.iloc[rows_train:, :]
+
+        print("\nEncoding complete.")
+        print(
+            f"No of features before encoding: {X_train.shape[1]}"
+            + "\n"
+            + f"No of features after encoding: {X_train_enc.shape[1]}"
+        )
+
+        return X_train_enc, X_test_enc
 
 
 def encode_labels(y_train, y_test):
