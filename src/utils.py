@@ -143,14 +143,15 @@ def encode_categorical(X_train, X_test, encoding="onehot"):
     if encoding == "label":
         # LabelEncoder (Encode target labels with value between 0 and n_classes-1)
         categorical_columns = []
-        categorical_dims = {}
+        categorical_dims = []
 
         # Encode categorical features
         for feature in cat_features:
             le = LabelEncoder()
             X_comb[feature] = le.fit_transform(X_comb[feature])
             categorical_columns.append(feature)
-            categorical_dims[feature] = len(le.classes_)
+            # Number of unique values in the encoded this feature
+            categorical_dims.append(len(le.classes_))
 
         # Split back into X_train and X_test
         rows_train = len(X_train)
