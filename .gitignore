@@ -9,7 +9,7 @@ __pycache__/
 
 # ignore file inside folder, but not the folder itself
 data/*
-checkpoints/*
+notebooks/checkpoints/*
 
 # Jupyter Notebook
 .ipynb_checkpoints
